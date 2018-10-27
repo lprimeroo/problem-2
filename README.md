@@ -6,7 +6,7 @@ The shell commands mentioned below install `pipenv`, clone the repository, and s
 
 ```sh
 pip install pipenv
-git clone https://github.com/saru95/problem-1; cd problem-1/
+git clone https://github.com/saru95/problem-2; cd problem-2/
 pipenv install; pipenv shell
 ```
 
@@ -45,9 +45,7 @@ possible token sequences (within a file). This information is cached using a dic
 
 ## Corner Cases
 
-1. As we increase the number of source files, the memory used by the script to maintain the cache of tokens starts exploding. This can be handled by using a persistent database to store the information. In my case, even though the memory shoots up till 15GB (in case of 100 files), the script tries to minimize the memory footprint wherever possible.
-
-2. 
+1. As we increase the number of source files, the memory used by the script to maintain the cache of tokens starts exploding. This can be handled by using a persistent database to store the information. In my case, even though the memory shoots up till 11GB (in case of 100 files), the script tries to minimize the memory footprint wherever possible.
 
 
 ## Samples
@@ -60,7 +58,7 @@ A dataset accompanies the code. `/dataset` has sub-folders based on the number o
     python script.py tsv_file_name
     Enter the directory path of source code files: ./dataset/two_files
     ```
-    * The generated file is present in `/Samples/two_files.tsv`.
+    * The generated file is present in `/samples/two_files.tsv`.
 
 2. For 10 files:
     * Execution Command: 
@@ -68,7 +66,7 @@ A dataset accompanies the code. `/dataset` has sub-folders based on the number o
     python script.py tsv_file_name
     Enter the directory path of source code files: ./dataset/ten_files
     ```
-    * The generated file is present in `/Samples/ten_files.tsv`.
+    * The generated file is present in `/samples/ten_files.tsv`.
 
 3. For 50 files:
     * Execution Command: 
@@ -76,7 +74,7 @@ A dataset accompanies the code. `/dataset` has sub-folders based on the number o
     python script.py tsv_file_name
     Enter the directory path of source code files: ./dataset/fifty_files
     ```
-    * The generated file is present in `/Samples/fifty_files.tsv`.
+    * The generated file is present in `/samples/fifty_files.tsv`.
 
 4. For 100 files:
     * Execution Command: 
@@ -84,7 +82,7 @@ A dataset accompanies the code. `/dataset` has sub-folders based on the number o
     python script.py tsv_file_name
     Enter the directory path of source code files: ./dataset/hundred_files
     ```
-    * The generated file is present in `/Samples/hundred_files.tsv`.
+    * The generated file is present in `/samples/hundred_files.tsv`.
 
 
 ## Issues
