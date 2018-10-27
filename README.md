@@ -34,7 +34,7 @@ $ python script.py <TSV_File_Name>
 
 ## Process
 
-1. The script first uses the C grammar (in `tokenizer/grammar/C.g4`) to generate a lexer in Python using <a href="http://www.antlr.org/">antr4</a>.
+1. The script first uses the C grammar (in `tokenizer/grammar/C.g4`) to generate a lexer in Python using <a href="http://www.antlr.org/">antlr4</a>.
 
 2. The script then reads all the specified source code files, extracts tokens from them and generates all the 
 possible token sequences (within a file). This information is cached using a dictionary.
@@ -50,7 +50,7 @@ possible token sequences (within a file). This information is cached using a dic
 
 ## Samples
 
-A dataset accompanies the code. `/dataset` has sub-folders based on the number of files, the script can be tested on.
+A dataset accompanies the code. `/dataset` has sub-folders based on the number of files. The script can be tested on them as follows.
 
 1. For 2 files:
     * Execution Command: 

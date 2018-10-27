@@ -11,10 +11,11 @@ from math import log2
 class TokenSequenceLCS():
 
   def __init__(self, files):
-    self.files = files
-    self.tokens_record = []
-    self.result = []
-    self.sequence_cache = defaultdict(lambda: 0) # maintains a record of counts of the token sequences
+    self.files = files # list of files to be parsed
+    self.tokens_record = [] # parsed tokens are stored here
+    self.result = [] # result to be written to the file
+    self.sequence_cache = defaultdict(lambda: 0) # maintains a record of the token sequences
+
 
   def get_all_subsequences(self, tokens=[]):
     '''
@@ -26,6 +27,7 @@ class TokenSequenceLCS():
       for j in range(i, l):
         if (j + 1) - i == 1:  continue
         self.sequence_cache[tuple(tokens[i:j + 1])] += 1
+
 
   def perform_lcs_calculation(self):
     '''
@@ -54,7 +56,8 @@ class TokenSequenceLCS():
       length = len(token)
       score = log2(length) * log2(count)
       self.result.append([score, length, count, list(token)])
-    self.result.sort(key=lambda x: x[0], reverse=True)
+    self.result.sort(key=lambda x: x[0], reverse=True) # sort the final result by score
+
 
   def perform_tokenizing(self):
     '''
@@ -71,6 +74,7 @@ class TokenSequenceLCS():
       self.tokens_record.append(tokens)
     print('All tokens are found!')
     self.perform_lcs_calculation()
+
 
   def write_to_tsv(self, filename):
     '''
