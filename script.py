@@ -2,6 +2,7 @@ import sys
 from antlr4 import *
 from tokenizer import *
 import glob
+from tqdm import tqdm
 import itertools
 from collections import defaultdict
 from os.path import join
@@ -13,32 +14,47 @@ class TokenSequenceLCS():
     self.files = files
     self.tokens_record = []
     self.result = []
-    self.sequence_counts = defaultdict(lambda: 0) # maintains a record of counts of the token sequences
-    self.sequence_lengths = [] # maintains a record of the lengths of the token sequences
+    self.sequence_cache = defaultdict(lambda: 0) # maintains a record of counts of the token sequences
 
-  def get_all_subsequences(self):
+  def get_all_subsequences(self, tokens=[]):
     '''
       This routine gets all the possible token sequences given a list of token and
-      maintains a record of their count of occurence and length.
+      maintains a cache of their count.
     '''
-    l = len(self.tokens_record)
+    l = len(tokens)
     for i in range(l):
       for j in range(i, l):
-        self.sequence_counts[' '.join(self.tokens_record[i:j + 1])] += 1
-        self.sequence_lengths.append([self.tokens_record[i:j + 1], len(self.tokens_record[i:j + 1])])
+        if (j + 1) - i == 1:  continue
+        self.sequence_cache[tuple(tokens[i:j + 1])] += 1
 
   def perform_lcs_calculation(self):
-    self.get_all_subsequences()
-    seen_set = set()
-    for record in self.sequence_lengths:
-      if ' '.join(record[0]) in seen_set: continue
-      count = self.sequence_counts[' '.join(record[0])]
-      if count == 1 or record[1] == 1: continue
-      seen_set.add(' '.join(record[0]))
-      score = log2(record[1]) * log2(count)
-      self.result.append([score, record[1], count, record[0]])
+    '''
+      This routine find the all the common token sequences across all the files
+      and generates the report.
+    '''
+    print('Fetching all the possible token sequences...')
+    for tokens in tqdm(self.tokens_record):
+      self.get_all_subsequences(tokens)
+
+    print('Finding the common tokens across all files...')
+    tokens_in_files = [''.join(tokens) for tokens in self.tokens_record]
+    cache_keys = list(self.sequence_cache.keys())
+    for token in tqdm(cache_keys):
+      if self.sequence_cache[token] < len(self.tokens_record):
+        del self.sequence_cache[token]
+        continue
+      for i in tokens_in_files:
+        if ''.join(token) not in i:
+          try: del self.sequence_cache[token]
+          except: continue
+
+    print('Generating the report....')
+    for token, count in self.sequence_cache.items():
+      if count == 1: continue
+      length = len(token)
+      score = log2(length) * log2(count)
+      self.result.append([score, length, count, list(token)])
     self.result.sort(key=lambda x: x[0], reverse=True)
-      # self.result += f'{score}\t{record[1]}\t{count}\t{}\n'
 
   def perform_tokenizing(self):
     '''
@@ -53,17 +69,22 @@ class TokenSequenceLCS():
       token_stream.fill() # read till EOF
       tokens = [token.text for token in token_stream.tokens][:-1]
       self.tokens_record.append(tokens)
-    self.tokens_record = list(itertools.chain(*self.tokens_record)) # combine tokens of all the files into one database
+    print('All tokens are found!')
     self.perform_lcs_calculation()
 
   def write_to_tsv(self, filename):
     '''
       This routine write's the result to a tab-separated file.
     '''
-    with open(f'{filename}.tsv', 'w') as file:
-      file.write('score\ttokens\tcount\tsequence\n')
-      for line in self.result:
-        file.write(f'{line[0]}\t{line[1]}\t{line[2]}\t{line[3]}\n')
+    try:
+      print('Writing to the TSV file....')
+      with open(f'{filename}.tsv', 'w') as file:
+        file.write('score\ttokens\tcount\tsequence\n')
+        for line in self.result:
+          file.write(f'{line[0]}\t{line[1]}\t{line[2]}\t{line[3]}\n')
+    except:
+      print('Invalid name or path.')
+
 
 if __name__ == '__main__':
   files = []
